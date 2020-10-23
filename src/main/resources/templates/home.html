@@ -22,6 +22,33 @@
         Number: $kv.key, Value: $kv.value
     #end
 
+    User : $!{user.name} ## 属性访问
+    $!{user.description} ## 字段
+    $!{user.getDescription()} ## 方法
+
+    #set($title = "nowCoder_title")
+    Title : $!{title}
+
+    ## 模板继承
+    Parse : #parse("header.html") ## 变量解析
+    Include : #include("header.html") ## 纯文本扩展
+
+    #macro (render_color, $index, $color) ##宏
+        Color Render Macro $index, $color
+    #end
+
+    #foreach($color in $colors)
+        #render_color($foreach.index, $color)
+    #end
+
+    #set(hello = "hello")
+    #set($helloworld1 = "$!{hello} world") ## 模板只解析双引号
+    $!hello
+    $helloworld1
+    #set($helloworld2 = '$!{hello} world') ##模板不解析单引号
+    $helloworld2
+
+
 </pre>
 </body>
 </html>
