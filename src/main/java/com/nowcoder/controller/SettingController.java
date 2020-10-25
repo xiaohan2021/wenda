@@ -1,6 +1,6 @@
-package com.example.controller;
+package com.nowcoder.controller;
 
-import com.example.service.WendaService;
+import com.nowcoder.service.WendaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -1,10 +1,7 @@
-package com.example.controller;
+package com.nowcoder.controller;
 
-import com.example.aspect.LogAspect;
-import com.example.model.User;
-import com.example.service.WendaService;
-import com.sun.xml.internal.ws.resources.HttpserverMessages;
-import javafx.beans.binding.StringBinding;
+import com.nowcoder.model.User;
+import com.nowcoder.service.WendaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +22,7 @@ import java.util.*;
  * @Author: 小韩同学
  * @Date: 2020/10/22
  */
-@Controller
+// @Controller
 public class IndexController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
