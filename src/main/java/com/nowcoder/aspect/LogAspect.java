@@ -15,8 +15,8 @@ import java.util.Date;
  * @Author: 小韩同学
  * @Date: 2020/10/23
  */
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class LogAspect {
 
     private static final Logger logger = LoggerFactory.getLogger(LogAspect.class);
@@ -30,7 +30,7 @@ public class LogAspect {
         logger.info("before method" + sb.toString());
     }
 
-    @After("execution(* com.nowcoder.controller.*Controller.*(..))")
+    @After("execution(* com.nowcoder.controller.IndexController.*(..))")
     public void afterMethod(){
         logger.info("after method" + new Date());
     }

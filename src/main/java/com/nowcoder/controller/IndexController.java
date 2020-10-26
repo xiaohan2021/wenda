@@ -22,7 +22,7 @@ import java.util.*;
  * @Author: 小韩同学
  * @Date: 2020/10/22
  */
-// @Controller
+//@Controller
 public class IndexController {
 
     private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
