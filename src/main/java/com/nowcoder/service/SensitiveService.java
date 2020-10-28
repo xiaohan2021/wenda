@@ -1,6 +1,7 @@
 package com.nowcoder.service;
 
 import jdk.internal.util.xml.impl.Input;
+import org.apache.commons.lang.CharUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,10 @@ public class SensitiveService implements InitializingBean {
         for (int i = 0; i < lineText.length(); i++) {
             Character c = lineText.charAt(i);
 
+            if(isSymbol(c)){
+                continue;
+            }
+
             TrieNode node = tempNode.getSubNode(c);
 
             if(node == null){
@@ -90,6 +95,13 @@ public class SensitiveService implements InitializingBean {
 
     private TrieNode rootNode = new TrieNode();
 
+    private boolean isSymbol(char c){
+        int ic = (int) c;
+        // 东亚文字  0x2E80 -- 0x9FFF
+        // 英文 isAsciiAlphanumeric(c)
+        return !CharUtils.isAsciiAlphanumeric(c) && (ic < 0x2E80 || ic > 0x9FFF);
+    }
+
     public String filter(String text){
         if(StringUtils.isBlank(text)){
             return text;
@@ -102,8 +114,19 @@ public class SensitiveService implements InitializingBean {
         int begin = 0;
         int position = 0;
 
-        if(position < text.length()){
+        while (position < text.length()){
             char c = text.charAt(position);
+
+            if(isSymbol(c)){
+                if(tempNode == rootNode){
+                    result.append(c);
+                    ++begin;
+                }
+
+                ++position;
+                continue;
+
+            }
 
             tempNode = tempNode.getSubNode(c);
 
@@ -131,6 +154,6 @@ public class SensitiveService implements InitializingBean {
         s.addWord("色情");
         s.addWord("赌博");
         s.addWord("嫖娼");
-        System.out.println(s.filter("你好色情"));
+        System.out.println(s.filter("hi    你😀好😀色😀情"));
     }
 }
