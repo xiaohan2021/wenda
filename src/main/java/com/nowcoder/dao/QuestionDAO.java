@@ -26,4 +26,6 @@ public interface QuestionDAO {
                               @Param("limit") int limit);
 
 
+    @Update({"update ", TABLE_NAME, " set comment_count=#{commentCount} where id=#{id}"})
+    int updateCommentCount(@Param("id") int id, @Param("commentCount") int commentCount);
 }
