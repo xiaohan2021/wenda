@@ -1,9 +1,16 @@
 package com.nowcoder.util;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.nowcoder.model.User;
 import redis.clients.jedis.BinaryClient;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.Tuple;
 
-import java.nio.file.attribute.UserPrincipalLookupService;
+import javax.sql.PooledConnection;
+import java.util.ServiceConfigurationError;
+
 
 /**
  * @Description:
@@ -71,7 +78,7 @@ public class JedisAdapter {
         jedis.hsetnx(userKey, "name", "tom"); // 存在则不重写
         print(21, jedis.hgetAll(userKey));
 
-        // set集合
+        // set集合 -- 无序的
         String likeKey1 = "commentLike1";
         String likeKey2 = "commentLike2";
         for (int i = 0; i < 10; i++) {
@@ -92,6 +99,67 @@ public class JedisAdapter {
         print(31,jedis.scard(likeKey1)); // set元素数目
         print(32, jedis.srandmember(likeKey1,2)); // 随机取值，例如抽奖
 
+        // Zset集合 -- 优先队列、有序集合，应用于排行榜等
+        String rankKey = "rankKey";
+        jedis.zadd(rankKey, 15, "Jim"); // 添加KV
+        jedis.zadd(rankKey, 60, "Ben");
+        jedis.zadd(rankKey, 90, "Lee");
+        jedis.zadd(rankKey, 75, "Lucy");
+        jedis.zadd(rankKey, 80, "Mei");
+        print(34, jedis.zcard(rankKey)); // 元素个数
+        print(35, jedis.zcount(rankKey, 61, 100)); // 范围内的元素个数
+        print(36, jedis.zscore(rankKey,"Lucy")); // 查询
+        jedis.zincrby(rankKey, 2 , "Lucy"); // 增加修改
+        print(37, jedis.zscore(rankKey,"Lucy"));
+        jedis.zincrby(rankKey, 2 , "Luc"); // 没有该元素时默认score为0
+        print(38, jedis.zscore(rankKey,"Luc"));
+        print(39,jedis.zrange(rankKey, 0, 100)); // 在一定角标范围内的key
+        print(40, jedis.zrange(rankKey, 0, 10));
+        print(41, jedis.zrange(rankKey, 1, 3)); // 默认升序排列
+        print(42, jedis.zrevrange(rankKey, 1, 3)); // 翻转，变为降序排列
+
+        for (Tuple tuple : jedis.zrangeByScoreWithScores(rankKey, "60", "100")){
+            print(43, tuple.getElement() + ":" + String.valueOf(tuple.getScore())); // 60-100分的元素遍历
+        }
+
+        print(44, jedis.zrank(rankKey, "Ben")); // 升序时，Ben排在第几位
+        print(45, jedis.zrevrank(rankKey, "Ben")); // 降序时， Ben排在第几位
+
+        String setKey = "zset";
+        jedis.zadd(setKey, 1, "a"); // score相同时，按member的字典顺序升序排序
+        jedis.zadd(setKey, 1, "b");
+        jedis.zadd(setKey, 1, "c");
+        jedis.zadd(setKey, 1, "d");
+        jedis.zadd(setKey, 1, "e");
+
+        print(46, jedis.zlexcount(setKey, "-", "+")); // score在正负∞间的元素个数
+        print(47, jedis.zlexcount(setKey, "[b", "[d")); // 一定范围内的元素个数  左右闭区间
+        print(48, jedis.zlexcount(setKey, "(b", "[d")); // 左开区间，右闭区间
+        jedis.zrem(setKey, "b"); // 删除元素
+        print(49, jedis.zrange(setKey, 0, 10));
+        jedis.zremrangeByLex(setKey, "(c", "+"); // 删除c到∞的元素，c为开区间
+        print(50, jedis.zrange(setKey, 0, 2)); // 角标0-2的元素
+
+        JedisPool pool = new JedisPool();
+        for (int i = 0; i < 100; i++) {
+            Jedis j = pool.getResource();
+            j.select(1);
+            print(i+1, j.get("pv"));
+            j.close();
+        }
+
+        User u = new User();
+        u.setName("xiaohan");
+        u.setPassword("xiaohan");
+        u.setHeadUrl("xiaohan.png");
+        u.setSalt("Salt");
+        u.setId(1);
+        print(51,JSONObject.toJSONString(u)); // json序列化
+        jedis.set("user1", JSONObject.toJSONString(u));
+
+        String value = jedis.get("user1");
+        User user2 = JSON.parseObject(value, User.class);
+        print(52, user2);
 
     }
 }
