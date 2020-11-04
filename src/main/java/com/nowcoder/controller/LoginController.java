@@ -1,5 +1,8 @@
 package com.nowcoder.controller;
 
+import com.nowcoder.async.EventModel;
+import com.nowcoder.async.EventProducer;
+import com.nowcoder.async.EventType;
 import com.nowcoder.service.UserService;
 import com.sun.deploy.net.HttpResponse;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +33,9 @@ public class LoginController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    EventProducer eventProducer;
 
     /**
      * 注册功能
@@ -87,7 +93,15 @@ public class LoginController {
             if(map.containsKey("ticket")){
                 Cookie cookie = new Cookie("ticket", map.get("ticket"));
                 cookie.setPath("/");
+                if(rememberme){
+                    cookie.setMaxAge(3600*24*5);
+                }
                 response.addCookie(cookie);
+
+                eventProducer.fireEvent(new EventModel(EventType.LOGIN)
+                        .setExt("username", username).setExt("email", "zjuyxy@qq.com")
+                        .setActorId(Integer.parseInt(map.get("userId"))));
+
                 if(StringUtils.isNotBlank(next)){
                     return "redirect:" + next;
                 }
@@ -98,7 +112,7 @@ public class LoginController {
             }
 
         } catch (Exception e){
-            logger.error("注册异常！！" + e.getMessage());
+            logger.error("登录异常！！" + e.getMessage());
             return "login";
         }
     }
@@ -108,7 +122,7 @@ public class LoginController {
      * @param model
      * @return
      */
-    @RequestMapping(path = {"/reglogin"}, method = {RequestMethod.GET})
+    @RequestMapping(path = {"/reglogin"}, method = {RequestMethod.GET, RequestMethod.POST})
     public String reglogin(Model model,
                            @RequestParam(value = "next", required = false) String next) {
         model.addAttribute("next", next);
