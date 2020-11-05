@@ -98,9 +98,9 @@ public class LoginController {
                 }
                 response.addCookie(cookie);
 
-                eventProducer.fireEvent(new EventModel(EventType.LOGIN)
+               /* eventProducer.fireEvent(new EventModel(EventType.LOGIN)
                         .setExt("username", username).setExt("email", "zjuyxy@qq.com")
-                        .setActorId(Integer.parseInt(map.get("userId"))));
+                        .setActorId(Integer.parseInt(map.get("userId"))));*/
 
                 if(StringUtils.isNotBlank(next)){
                     return "redirect:" + next;

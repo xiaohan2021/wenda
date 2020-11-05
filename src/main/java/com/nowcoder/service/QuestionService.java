@@ -22,7 +22,7 @@ public class QuestionService {
     SensitiveService sensitiveService;
 
     public Question selectById(int id){
-        return questionDAO.selectById(id);
+        return questionDAO.getById(id);
     }
 
     public int addQuestion(Question question){
@@ -42,5 +42,9 @@ public class QuestionService {
 
     public int updateCommentCount(int id, int count) {
         return questionDAO.updateCommentCount(id, count);
+    }
+
+    public Question getById(int questionId) {
+        return questionDAO.getById(questionId);
     }
 }
