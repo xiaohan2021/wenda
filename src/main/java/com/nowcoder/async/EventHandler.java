@@ -8,7 +8,7 @@ import java.util.List;
  * @Date: 2020/11/4
  */
 public interface EventHandler {
-    void doHandle(EventModel model);
+    void doHandler(EventModel model);
 
     List<EventType> getSupportEventTypes();
 }

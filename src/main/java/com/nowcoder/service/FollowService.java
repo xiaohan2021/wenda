@@ -29,7 +29,9 @@ public class FollowService {
         Date date = new Date();
         Jedis jedis = jedisAdapter.getJedis();
         Transaction tx = jedisAdapter.multi(jedis);
+        // 实体粉丝增加当前用户
         tx.zadd(followerKey, date.getTime(), String.valueOf(userId));
+        // 当前用户对这类实体关注+1
         tx.zadd(followeeKey, date.getTime(), String.valueOf(entityId));
         List<Object> ret = jedisAdapter.exec(tx, jedis);
         return ret.size() == 2 && (Long) ret.get(0) > 0 && (Long) ret.get(1) > 0;
@@ -38,10 +40,12 @@ public class FollowService {
     public boolean unfollow(int userId, int entityType, int entityId){
         String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);
         String followeeKey = RedisKeyUtil.getFolloweeKey(userId, entityType);
-        Date date = new Date();
+        // Date date = new Date();
         Jedis jedis = jedisAdapter.getJedis();
         Transaction tx = jedisAdapter.multi(jedis);
-        tx.zrem(followerKey,  String.valueOf(userId));
+        // 移除当前实体从粉丝列表中
+        tx.zrem(followerKey, String.valueOf(userId));
+        // 当前用户对这类实体关注-1
         tx.zrem(followeeKey, String.valueOf(entityId));
         List<Object> ret = jedisAdapter.exec(tx, jedis);
         return ret.size() == 2 && (Long) ret.get(0) > 0 && (Long) ret.get(1) > 0;
@@ -60,19 +64,20 @@ public class FollowService {
         return getIdsFromSet(jedisAdapter.zrevrange(followerKey,0, count));
     }
 
-    public List<Integer> getFollowers(int entityType, int entityId, int offset, int count){
-        String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);
-        return getIdsFromSet(jedisAdapter.zrevrange(followerKey,offset, count));
-    }
-
     public List<Integer> getFollowees(int entityType, int entityId, int count){
         String followeeKey = RedisKeyUtil.getFolloweeKey(entityType, entityId);
         return getIdsFromSet(jedisAdapter.zrevrange(followeeKey,0, count));
     }
 
+    public List<Integer> getFollowers(int entityType, int entityId, int offset, int count){
+        String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);
+        return getIdsFromSet(jedisAdapter.zrevrange(followerKey,offset, offset + count));
+    }
+
+
     public List<Integer> getFollowees(int entityType, int entityId, int offset, int count){
         String followeeKey = RedisKeyUtil.getFolloweeKey(entityType, entityId);
-        return getIdsFromSet(jedisAdapter.zrevrange(followeeKey,offset, count));
+        return getIdsFromSet(jedisAdapter.zrevrange(followeeKey,offset, offset  + count));
     }
 
     public long getFolloweeCount(int entityType, int entityId){

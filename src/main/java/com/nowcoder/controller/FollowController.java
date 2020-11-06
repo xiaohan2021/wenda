@@ -18,7 +18,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.View;
-import java.lang.invoke.MethodType;
 import java.util.*;
 
 /**
@@ -48,7 +47,7 @@ public class FollowController {
     @Autowired
     EventProducer eventProducer;
 
-    @RequestMapping(path = {"/followUser"}, method = {RequestMethod.POST})
+    @RequestMapping(path = {"/followUser"}, method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     public String follow(@RequestParam("userId") int userId) {
         if(hostHolder.getUser() == null){
@@ -130,29 +129,33 @@ public class FollowController {
 
     @RequestMapping(path = {"/user/{uid}/followees"}, method = {RequestMethod.GET})
     public String followees(Model model, @PathVariable("uid") int userId) {
-        List<Integer> followeeIds = followService.getFollowees(userId,EntityType.ENTITY_USER, 0, 10);
+        List<Integer> followeeIds = followService.getFollowees(EntityType.ENTITY_USER, userId, 0, 10);
         if(hostHolder.getUser() != null){
             model.addAttribute("followees", getUserInfo(hostHolder.getUser().getId(), followeeIds));
         } else {
             model.addAttribute("followees", getUserInfo(0, followeeIds));
         }
+        model.addAttribute("followeeCount", followService.getFolloweeCount(EntityType.ENTITY_USER, userId));
+        model.addAttribute("curUser", userService.getUser(userId));
         return "followees";
 
     }
 
     @RequestMapping(path = {"/user/{uid}/followers"}, method = {RequestMethod.GET})
     public String followers(Model model, @PathVariable("uid") int userId) {
-        List<Integer> followerIds = followService.getFollowers(userId,EntityType.ENTITY_USER, 0, 10);
+        List<Integer> followerIds = followService.getFollowers(EntityType.ENTITY_USER, userId,0, 10);
         if(hostHolder.getUser() != null){
             model.addAttribute("followers", getUserInfo(hostHolder.getUser().getId(), followerIds));
         } else {
             model.addAttribute("followers", getUserInfo(0, followerIds));
         }
+        model.addAttribute("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, userId));
+        model.addAttribute("curUser", userService.getUser(userId));
         return "followers";
     }
 
     private List<ViewObject> getUserInfo(int localUserId, List<Integer> userIds){
-        List<ViewObject> userInfos = new ArrayList<>();
+        List<ViewObject> userInfos = new ArrayList<ViewObject>();
         for(Integer uid : userIds) {
             User user = userService.getUser(uid);
             if(user == null){
@@ -161,7 +164,7 @@ public class FollowController {
 
             ViewObject vo = new ViewObject();
             vo.set("user", user);
-//            vo.set("commentCount", commentService.getCommentCount());
+            vo.set("commentCount", commentService.getUserCommentCount(uid));
             vo.set("followerCount", followService.getFollowerCount(EntityType.ENTITY_USER, uid));
             vo.set("followeeCount", followService.getFolloweeCount(EntityType.ENTITY_USER, uid));
 
@@ -174,7 +177,5 @@ public class FollowController {
         }
         return userInfos;
     }
-
-
 
 }

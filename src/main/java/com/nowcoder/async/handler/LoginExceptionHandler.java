@@ -24,7 +24,7 @@ public class LoginExceptionHandler implements EventHandler {
     MailSender mailSender;
 
     @Override
-    public void doHandle(EventModel model) {
+    public void doHandler(EventModel model) {
         // xxxx判断发现这个用户登陆异常
         Map<String, Object> map = new HashMap<String, Object>();
         map.put("username", model.getExt("username"));

@@ -66,7 +66,7 @@ public class EventConsumer implements InitializingBean , ApplicationContextAware
                         }
 
                         for(EventHandler handler : config.get(eventModel.getType())){
-                            handler.doHandle(eventModel);
+                            handler.doHandler(eventModel);
                         }
                     }
                 }
