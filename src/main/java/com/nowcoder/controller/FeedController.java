@@ -25,7 +25,6 @@ import java.util.List;
  */
 @Controller
 public class FeedController {
-
     @Autowired
     HostHolder hostHolder;
 
@@ -45,7 +44,7 @@ public class FeedController {
         List<Integer> followees = new ArrayList<>();
 
         if(localUserId != 0){
-            followees = followService.getFollowees(localUserId, EntityType.ENTITY_USER, Integer.MAX_VALUE);
+            followees = followService.getFollowees(EntityType.ENTITY_USER, localUserId, Integer.MAX_VALUE);
         }
         List<Feed> feeds = feedService.getUserFeeds(Integer.MAX_VALUE, followees, 10);
         model.addAttribute("feeds", feeds);
@@ -66,7 +65,6 @@ public class FeedController {
             }
             feeds.add(feed);
         }
-
         model.addAttribute("feeds", feeds);
         return "feeds";
 

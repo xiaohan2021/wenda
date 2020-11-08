@@ -58,7 +58,7 @@ public class FollowController {
         eventProducer.fireEvent(new EventModel(EventType.FOLLOW)
                 .setActorId(hostHolder.getUser().getId()).setEntityId(userId)
                 .setEntityType(EntityType.ENTITY_USER).setEntityOwnerId(userId));
-        return WendaUtil.getJSONString(ret ? 0 : 1, String.valueOf(followService.getFolloweeCount(hostHolder.getUser().getId(),EntityType.ENTITY_USER)));
+        return WendaUtil.getJSONString(ret ? 0 : 1, String.valueOf(followService.getFolloweeCount(EntityType.ENTITY_USER, hostHolder.getUser().getId())));
     }
 
     @RequestMapping(path = {"/unfollowUser"}, method = {RequestMethod.POST})
@@ -72,7 +72,7 @@ public class FollowController {
         eventProducer.fireEvent(new EventModel(EventType.UNFOLLOW)
                 .setActorId(hostHolder.getUser().getId()).setEntityId(userId)
                 .setEntityType(EntityType.ENTITY_USER).setEntityOwnerId(userId));
-        return WendaUtil.getJSONString(ret ? 0 : 1, String.valueOf(followService.getFolloweeCount(hostHolder.getUser().getId(),EntityType.ENTITY_USER)));
+        return WendaUtil.getJSONString(ret ? 0 : 1, String.valueOf(followService.getFolloweeCount(EntityType.ENTITY_USER, hostHolder.getUser().getId())));
     }
 
     @RequestMapping(path = {"/followQuestion"}, method = {RequestMethod.POST})

@@ -68,8 +68,8 @@ public class FeedHandler implements EventHandler {
     @Override
     public void doHandler(EventModel model) {
         // 方便测试数据
-        Random r = new Random();
-        model.setActorId(1 + r.nextInt(10));
+//        Random r = new Random();
+//        model.setActorId(1 + r.nextInt(10));
 
         Feed feed = new Feed();
         feed.setCreatedDate(new Date());

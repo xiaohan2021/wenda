@@ -12,7 +12,6 @@ import java.util.List;
  * @Author: 小韩同学
  * @Date: 2020/10/30
  */
-@Service
 @Mapper
 public interface FeedDAO {
     String TABLE_NAME = " feed ";

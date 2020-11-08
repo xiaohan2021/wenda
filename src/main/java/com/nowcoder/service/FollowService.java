@@ -25,7 +25,7 @@ public class FollowService {
 
     public boolean follow(int userId, int entityType, int entityId){
         String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);
-        String followeeKey = RedisKeyUtil.getFolloweeKey(userId, entityType);
+        String followeeKey = RedisKeyUtil.getFolloweeKey(entityType, userId);
         Date date = new Date();
         Jedis jedis = jedisAdapter.getJedis();
         Transaction tx = jedisAdapter.multi(jedis);
@@ -39,7 +39,7 @@ public class FollowService {
 
     public boolean unfollow(int userId, int entityType, int entityId){
         String followerKey = RedisKeyUtil.getFollowerKey(entityType, entityId);
-        String followeeKey = RedisKeyUtil.getFolloweeKey(userId, entityType);
+        String followeeKey = RedisKeyUtil.getFolloweeKey(entityType, userId);
         // Date date = new Date();
         Jedis jedis = jedisAdapter.getJedis();
         Transaction tx = jedisAdapter.multi(jedis);
@@ -80,7 +80,7 @@ public class FollowService {
         return getIdsFromSet(jedisAdapter.zrevrange(followeeKey,offset, offset  + count));
     }
 
-    public long getFolloweeCount(int entityType, int entityId){
+    public long getFolloweeCount(int entityType,int entityId){
         String followeeKey = RedisKeyUtil.getFolloweeKey(entityType, entityId);
         return jedisAdapter.zcard(followeeKey);
     }
