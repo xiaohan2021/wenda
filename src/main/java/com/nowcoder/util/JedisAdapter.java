@@ -28,7 +28,7 @@ public class JedisAdapter implements InitializingBean {
         System.out.println(String.format("%d, %s", index, obj.toString()));
     }
 
-    public static void main(String[] args) {
+    public static void mainx(String[] args) {
         Jedis jedis = new Jedis("redis://localhost:6379/1"); // redis连接服务器
         jedis.flushDB(); // 删除数据库记录
 

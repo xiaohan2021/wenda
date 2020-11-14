@@ -149,11 +149,11 @@ public class SensitiveService implements InitializingBean {
         return result.toString();
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         SensitiveService s = new SensitiveService();
         s.addWord("色情");
         s.addWord("赌博");
         s.addWord("嫖娼");
         System.out.println(s.filter("hi    你😀好😀色😀情"));
-    }
+    }*/
 }
